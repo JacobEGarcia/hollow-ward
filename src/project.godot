@@ -1,0 +1,38 @@
+; Engine configuration file.
+; HOLLOW WARD - original survival-horror vertical slice (Godot 4.7.2)
+
+config_version=5
+
+[application]
+
+config/name="HOLLOW WARD"
+config/description="An original survival-horror vertical slice. Flat FPS in any browser, WebXR VR on Quest."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.043, 0.047, 0.051, 1)
+
+[autoload]
+
+GS="*res://scripts/game_state.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.02, 0.024, 0.028, 1)
+anti_aliasing/quality/msaa_3d=2
+
+[physics]
+
+common/physics_ticks_per_second=60
+
+[xr]
+
+openxr/enabled=false
