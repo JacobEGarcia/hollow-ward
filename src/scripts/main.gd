@@ -48,6 +48,27 @@ func _ready() -> void:
 		drv.run(self)
 	elif shot_mode:
 		_run_shots()
+	_setup_js_debug()
+
+func _setup_js_debug() -> void:
+	if not OS.has_feature("web"):
+		return
+	var win = JavaScriptBridge.get_interface("window")
+	win.hollowCapture = JavaScriptBridge.create_callback(_on_js_capture)
+	win.hollowNewGame = JavaScriptBridge.create_callback(func(_a): new_game())
+
+func _on_js_capture(_args) -> void:
+	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	if img == null:
+		JavaScriptBridge.eval("window.__hollowPng = 'ERR:no-image'")
+		return
+	var tw := 480
+	var th := int(float(img.get_height()) / float(img.get_width()) * tw)
+	img.resize(tw, th, Image.INTERPOLATE_BILINEAR)
+	var b64 := Marshalls.raw_to_base64(img.save_png_to_buffer())
+	JavaScriptBridge.eval("window.__hollowPng = '" + b64 + "'")
 
 # ---------- audio ----------
 
