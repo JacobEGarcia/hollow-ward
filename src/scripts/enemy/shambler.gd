@@ -226,10 +226,22 @@ func _die() -> void:
 	var shape := get_child(0) as CollisionShape3D
 	if shape:
 		shape.set_deferred("disabled", true)
-	var tw := create_tween()
-	tw.tween_property(visual, "rotation:x", -PI / 2.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(visual, "position:y", 0.25, 0.8)
+	if anim == null or not anim.has_animation("death"):
+		var tw := create_tween()
+		tw.tween_property(visual, "rotation:x", -PI / 2.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		tw.parallel().tween_property(visual, "position:y", 0.25, 0.8)
 	set_physics_process(false)
+
+var _clip_state := ""
+func _drive_clips() -> void:
+	var want := "idle"
+	if state == "chase" or ((state == "idle" or state == "patrol") and Vector2(velocity.x, velocity.z).length() > 0.1):
+		want = "walk"
+	elif state == "attack":
+		want = "attack"
+	if want != _clip_state and anim.has_animation(want):
+		_clip_state = want
+		anim.play(want)
 
 func _play_anim(anim_name: String) -> void:
 	if anim != null and anim.has_animation(anim_name):
@@ -240,6 +252,7 @@ func _patrol_target_new() -> void:
 
 func _animate_placeholder(delta: float) -> void:
 	if anim != null:
+		_drive_clips()
 		return
 	var moving := Vector2(velocity.x, velocity.z).length() > 0.1
 	if body_node == null:

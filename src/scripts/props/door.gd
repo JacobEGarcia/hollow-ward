@@ -24,6 +24,8 @@ func _ready() -> void:
 	add_child(visual)
 	leaf = visual.find_child("Leaf", true, false)
 	if leaf == null:
+		leaf = visual.find_child("leaf", true, false)
+	if leaf == null:
 		leaf = Node3D.new()
 		leaf.name = "Leaf"
 		leaf.position = Vector3(-0.5, 0, 0)
